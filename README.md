@@ -29,8 +29,8 @@
 
 ## How to know if you are in kubernetes pod
 
-- docker signs
-- hostname like `<app-name>-<random hex>-<shorter random hex>`
+- docker signs if it is CRI
+- hostname like `<app-name>-[a-f0-9]{10}-[a-z0-9]{5}`
 
   Example: `tomcat-55c4cc5fcd-7l6x4`
 
