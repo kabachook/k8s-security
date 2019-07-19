@@ -130,3 +130,59 @@ Kubernetes dashboard
 No access by default service token => Good
 
 ![Dashboard with default token](/imgs/dashboard1.png)
+
+Need to create a user with admin binding to access metrics
+
+---
+
+Kube-dns
+
+Provides simple service(and more) resolution by name
+
+[Schema](https://github.com/kubernetes/dns/blob/master/docs/specification.md)
+
+`<service>.<ns>.svc.<zone>. <ttl> IN A <cluster-ip>`
+
+```console
+$ dig kube-dns.kube-system.svc.cluster.local +short
+10.96.0.10
+```
+
+However no ping and route:
+
+```console
+# ping 10.96.0.10
+PING 10.96.0.10 (10.96.0.10): 56 data bytes
+^C
+--- 10.96.0.10 ping statistics ---
+5 packets transmitted, 0 packets received, 100% packet loss
+# ip r
+default via 10.244.1.1 dev eth0
+10.244.0.0/16 via 10.244.1.1 dev eth0
+10.244.1.0/24 dev eth0 scope link  src 10.244.1.7
+# ip r add 10.96.0.0/24 via 10.244.1.1
+ip: RTNETLINK answers: Operation not permitted
+# id
+uid=0(root) gid=0(root) groups=0(root),1(bin),2(daemon),3(sys),4(adm),6(disk),10(wheel),11(floppy),20(dialout),26(tape),27(video)
+```
+
+---
+
+BUT!
+
+```console
+# dig kubernetes-dashboard.kubernetes-dashboard.svc.cluster.local +short
+10.111.128.195
+# ping 10.111.128.195
+PING 10.111.128.195 (10.111.128.195): 56 data bytes
+^C
+--- 10.111.128.195 ping statistics ---
+2 packets transmitted, 0 packets received, 100% packet loss
+# curl -sk https://10.111.128.195
+<!doctype html>
+<html>
+
+...
+```
+
+=> No default network policy for communication between namespaces!!!
