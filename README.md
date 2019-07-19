@@ -69,7 +69,11 @@ Settings:
 - CRI - Docker
 - CNI - Flannel
 
+---
+
 ## What is open by default
+
+Master:
 
 ```console
 root@ubuntu0:~# lsof -i | grep "*"
@@ -79,6 +83,8 @@ kube-apis  2153            root    3u  IPv6  26160      0t0  TCP *:6443 (LISTEN)
 kube-cont  2208            root    3u  IPv6  26190      0t0  TCP *:10252 (LISTEN)
 kube-prox  2756            root   10u  IPv6  30091      0t0  TCP *:10256 (LISTEN)
 ```
+
+Node:
 
 ```console
 root@ubuntu1:~# lsof -i | grep "*"
@@ -125,17 +131,50 @@ However
 
 ---
 
-Kubernetes dashboard
+## Kubernetes dashboard
 
 No access by default service token => Good
 
-![Dashboard with default token](/imgs/dashboard1.png)
+![Dashboard with default token](/imgs/dashboard_forbidden.png)
 
 Need to create a user with admin binding to access metrics
 
 ---
 
-Kube-dns
+As per manual some admins may give `kubernetes-dashboard` acoount `admin-cluster` role ([Source](https://github.com/kubernetes/dashboard/wiki/Access-control#admin-privileges)) and set `--enable-skip-flag` (set by default on versions <2.0).
+
+It leads to auth bypass on dashboard, which is accessible from any pod by default
+
+Needed configuration:
+
+```diff
+--- recommended.orig.yaml	2019-07-19 15:59:14.130001048 +0300
++++ recommended.yaml	2019-07-19 15:58:01.303334383 +0300
+@@ -160,7 +160,7 @@
+ roleRef:
+   apiGroup: rbac.authorization.k8s.io
+   kind: ClusterRole
+-  name: kubernetes-dashboard
++  name: cluster-admin
+ subjects:
+   - kind: ServiceAccount
+     name: kubernetes-dashboard
+@@ -196,6 +196,7 @@
+           args:
+             - --auto-generate-certificates
+             - --namespace=kubernetes-dashboard
++            - --enable-skip-login
+             # Uncomment the following line to manually specify Kubernetes API server Host
+             # If not specified, Dashboard will attempt to auto discover the API server and connect
+             # to it. Uncomment only if the default does not work.
+
+```
+
+![Skip button](/imgs/dashboard_skip.png)
+
+---
+
+## Kube-dns
 
 Provides simple service(and more) resolution by name
 
@@ -168,7 +207,7 @@ uid=0(root) gid=0(root) groups=0(root),1(bin),2(daemon),3(sys),4(adm),6(disk),10
 
 ---
 
-BUT!
+### BUT!
 
 ```console
 # dig kubernetes-dashboard.kubernetes-dashboard.svc.cluster.local +short
