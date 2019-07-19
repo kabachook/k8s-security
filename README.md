@@ -124,3 +124,9 @@ However
 - No automatic certificate rotation
 
 ---
+
+Kubernetes dashboard
+
+No access by default service token => Good
+
+![Dashboard with default token](/imgs/dashboard1.png)
