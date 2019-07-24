@@ -54,6 +54,8 @@
   1:name=systemd:/kubepods/burstable/pode060d9f5-4f41-4153-8daf-4a7ee2a7eaad/4088e78945f24d32ca3e1b09f097704c9c92e70f525a553fef8da2e6c7f333fd
   ```
 
+  But, there is an option that k8s controls cgroups via systemd
+
 ## ENV
 
 K8s v1.15.0
@@ -147,6 +149,43 @@ However
 - No egress traffic restriction to `kube-system` namespace
 - ServiceAccout tokens still present on pods (`automountServiceAccountToken:false`)
 - No automatic certificate rotation
+
+---
+
+## Config files
+
+For both master and node
+
+- `/etc/kubernetes/*.conf` - credentials for apiserver of componenets(including cluster admin config!)
+- `/etc/kubernetes/manifests/*.yaml` - cluster components(etcd, apiserver, control-manager, scheduler) configs
+- `/etc/kubernetes/pki/**/*` - certs and keys for all componenets
+- `/var/lib/kubelet/**/*` - kubelet files
+
+Everything should be readable only for root and k8s admin user(if present)
+Exception: all `*.crt` files can be public
+
+By default only readable for root
+
+---
+
+## Secret files
+
+Must be readable only for root
+
+### Master
+
+- `/etc/kubernetes/admin.conf` - cluster admin credentials
+- `/etc/kubernetes/{kubelet,control-manager,scheduler}.conf` - componenets credentials
+- `/etc/kubernetes/pki` - PKI folder, contains keys and CA, keys for apiserver and other componenets
+- `/var/lib/kubelet/config.yaml` - kubelet config (includes CA path)
+
+### Nodes
+
+- `/var/lib/kubelet/config.yaml` - kubelet config (includes CA path)
+
+### Pods
+
+- `/var/run/secrets/kubernetes.io/serviceaccount/*` - default ServiceAccount token, and apiserver CA cert
 
 ---
 
@@ -248,3 +287,5 @@ PING 10.111.128.195 (10.111.128.195): 56 data bytes
 ---
 
 ## Helm
+
+By default doesn't use TLS
