@@ -8,7 +8,7 @@
 - `/entrypoint.sh`,`/app-entrypoint.sh`
 - strange hostname looking like hex string `de605c442545`
 - PID 1 process is application process or small init system like `dumb-init`
-- `cat /proc/self/cgroups` show that we are in cgoup
+- `cat /proc/self/cgroups` shows that we are in cgoup
 
   Example:
 
@@ -263,8 +263,6 @@ ip: RTNETLINK answers: Operation not permitted
 uid=0(root) gid=0(root) groups=0(root),1(bin),2(daemon),3(sys),4(adm),6(disk),10(wheel),11(floppy),20(dialout),26(tape),27(video)
 ```
 
----
-
 ### BUT!
 
 ```console
@@ -289,3 +287,9 @@ PING 10.111.128.195 (10.111.128.195): 56 data bytes
 ## Helm
 
 By default doesn't use TLS
+
+---
+
+## Making new ServiceAccounts
+
+If you leak Helm or Dashboard account with `cluster-admin` role binding, attacker gets full access to everyhing
