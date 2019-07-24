@@ -54,7 +54,7 @@
   1:name=systemd:/kubepods/burstable/pode060d9f5-4f41-4153-8daf-4a7ee2a7eaad/4088e78945f24d32ca3e1b09f097704c9c92e70f525a553fef8da2e6c7f333fd
   ```
 
-## Test cluster setup
+## ENV
 
 K8s v1.15.0
 
@@ -66,8 +66,8 @@ IPs:
 
 Settings:
 
-- CRI - Docker
-- CNI - Flannel
+- CRI - Docker 18.09.7
+- CNI - Flannel 0.11.0
 
 ---
 
@@ -92,18 +92,37 @@ kubelet    770            root   30u  IPv6  23999      0t0  TCP *:10250 (LISTEN)
 kube-prox 2518            root   10u  IPv6  27979      0t0  TCP *:10256 (LISTEN)
 ```
 
----
+**Master**
 
-On master node:
+| Port  | Component               | Description                                                      | How to query                                      |
+| ----- | ----------------------- | ---------------------------------------------------------------- | ------------------------------------------------- |
+| 6443  | kube-apiserver          | k8s API for user interaction                                     | `kubectl ...` or `curl https://ip:6443/`          |
+| 10250 | kubelet                 | k8s node agent                                                   | `curl https://ip:10250/{metrics,stats,logs,spec}` |
+| 10251 | kube-scheduler          | k8s pod sheduler, exposes some metrics in prometheus format      | `curl http://ip:10251/metrics`                    |
+| 10252 | kube-controller-manager | k8s control loop to reach desired cluster state, exposes metrics | `curl http://ip:10252/merrics`                    |
+| 10256 | kube-proxy              | k8s proxy for port forwarding                                    | -                                                 |
+
+**Nodes**
+
+| Port  | Component  | Description                   | How to query                                      |
+| ----- | ---------- | ----------------------------- | ------------------------------------------------- |
+| 10250 | kubelet    | k8s node agent                | `curl https://ip:10250/{metrics,stats,logs,spec}` |
+| 10256 | kube-proxy | k8s proxy for port forwarding | -                                                 |
+
+---
 
 - kube-scheduler api on `:10251`
 
   ```console
   root@ubuntu1:~# curl -sk http://172.16.0.2:10251/metrics
   # Very long output here...
+  # TYPE kubernetes_build_info gauge
+  kubernetes_build_info{buildDate="2019-06-19T16:32:14Z",compiler="gc",gitCommit="e8462b5b5dc2584fdcd18e6bcfe9f1e4d970a529",gitTreeState="clean",gitVersion="v1.15.0",goVersion="go1.12.5",major="1",minor="15",platform="linux/amd64"} 1
   ```
 
-  Not vesy useful
+  Same for `10252` port
+
+  Not vesy useful, but get k8s version always. Maybe some other stuff on previous versions
 
 ---
 
@@ -225,3 +244,7 @@ PING 10.111.128.195 (10.111.128.195): 56 data bytes
 ```
 
 => No default network policy for communication between namespaces!!!
+
+---
+
+## Helm
