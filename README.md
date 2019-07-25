@@ -286,7 +286,43 @@ PING 10.111.128.195 (10.111.128.195): 56 data bytes
 
 ## Helm
 
-By default doesn't use TLS
+By default doesn't use TLS and X509 authorization
+
+So, given access to some pod, we can run our malicious chart to take nodes
+
+1. Download Helm
+2. Get Tiller ip, thanks to kube-dns. `dig tiller-deploy.kube-system.svc.cluster.local`
+3. `./helm --host tiller-deploy.kube-system.svc.cluster.local:44134 install pwnchart.tar.gz ...`
+
+Demo:
+
+<!-- <img src="./imgs/helm_pwn.svg"> -->
+
+Mitigation:
+
+If you don't want to use TLS remove Tiller service and path deployment to listen only on localhost
+
+```console
+$ kubectl -n kube-system delete service tiller-deploy
+$ kubectl -n kube-system patch deployment tiller-deploy --patch '
+spec:
+  template:
+    spec:
+      containers:
+        - name: tiller
+          ports: []
+          command: ["/tiller"]
+          args: ["--listen=localhost:44134"]
+'
+```
+
+Helm CLI uses port-forward via k8s api to reach tiller
+
+Else enable TLS
+
+More [here](https://engineering.bitnami.com/articles/helm-security.html)
+
+Or wait for new version 3, which [removes Tiller at all](https://github.com/helm/community/blob/master/helm-v3/000-helm-v3.md).
 
 ---
 
