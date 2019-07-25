@@ -296,7 +296,7 @@ So, given access to some pod, we can run our malicious chart to take nodes
 
 Demo:
 
-<!-- <img src="./imgs/helm_pwn.svg"> -->
+<img src="./imgs/helm_pwn.svg">
 
 Mitigation:
 
