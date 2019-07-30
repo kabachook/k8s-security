@@ -298,7 +298,7 @@ Demo [here](./imgs/helm_pwn.svg)
 
 Mitigation:
 
-If you don't want to use TLS remove Tiller service and path deployment to listen only on localhost
+If you don't want to use TLS remove Tiller service and patch deployment to listen only on localhost
 
 ```console
 $ kubectl -n kube-system delete service tiller-deploy
