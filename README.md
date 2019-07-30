@@ -8,7 +8,7 @@
 - `/entrypoint.sh`,`/app-entrypoint.sh`
 - strange hostname looking like hex string `de605c442545`
 - PID 1 process is application process or small init system like `dumb-init`
-- `cat /proc/self/cgroups` shows that we are in cgoup
+- `cat /proc/self/cgroup` shows that we are in cgoup
 
   Example:
 
@@ -36,7 +36,7 @@
 
   Example: `tomcat-55c4cc5fcd-7l6x4`
 
-- `cat /proc/self/cgroups` shows that we are in k8s
+- `cat /proc/self/cgroup` shows that we are in k8s
 
   Example:
 
@@ -101,7 +101,7 @@ kube-prox 2518            root   10u  IPv6  27979      0t0  TCP *:10256 (LISTEN)
 | 6443  | kube-apiserver          | k8s API for user interaction                                     | `kubectl ...` or `curl https://ip:6443/`          |
 | 10250 | kubelet                 | k8s node agent                                                   | `curl https://ip:10250/{metrics,stats,logs,spec}` |
 | 10251 | kube-scheduler          | k8s pod sheduler, exposes some metrics in prometheus format      | `curl http://ip:10251/metrics`                    |
-| 10252 | kube-controller-manager | k8s control loop to reach desired cluster state, exposes metrics | `curl http://ip:10252/merrics`                    |
+| 10252 | kube-controller-manager | k8s control loop to reach desired cluster state, exposes metrics | `curl http://ip:10252/metrics`                    |
 | 10256 | kube-proxy              | k8s proxy for port forwarding                                    | -                                                 |
 
 **Nodes**
@@ -124,7 +124,7 @@ kube-prox 2518            root   10u  IPv6  27979      0t0  TCP *:10256 (LISTEN)
 
   Same for `10252` port
 
-  Not vesy useful, but get k8s version always. Maybe some other stuff on previous versions
+  Not very useful, but get k8s version always. Maybe some other stuff on previous versions
 
 ---
 
@@ -294,9 +294,7 @@ So, given access to some pod, we can run our malicious chart to take nodes
 2. Get Tiller ip, thanks to kube-dns. `dig tiller-deploy.kube-system.svc.cluster.local`
 3. `./helm --host tiller-deploy.kube-system.svc.cluster.local:44134 install pwnchart.tar.gz ...`
 
-Demo:
-
-<img src="./imgs/helm_pwn.svg">
+Demo [here](./imgs/helm_pwn.svg)
 
 Mitigation:
 
