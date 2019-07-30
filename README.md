@@ -343,10 +343,16 @@ Hence, ServiceAccount security is important too!
 ServiceAccount <----RoleBinding----> Role
 ```
 
-ServiceAcoount gets its permissions via RoleBinding, which is just a connection between role and account
+ServiceAcoount gets its permissions via RoleBinding, which is just a connection between role and account.
 
-In many apps it is required to create ServiceAccount with `cluster-admin` role binding, to work properly. It leads to high risk of ServiceAccount token steal.
+In many apps it is required to create ServiceAccount with `cluster-admin` role binding, to work properly. Since `cluster-admin` role allows you to do anything in cluster, it leads to high risk of ServiceAccount token steal.
 
 For example, if you leak Helm or Dashboard account with `cluster-admin` role binding, attacker gets **full access to your cluster**
+
+Mitigation:
+
+Use namespaces. Never give an account a `cluster-admin` role.
+
+If you need admin privilleges for your app(e.g. Tiller). Create a new ServiceAccount which is namespaced.
 
 ---
