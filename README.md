@@ -118,6 +118,73 @@ kube-prox 2518            root   10u  IPv6  27979      0t0  TCP *:10256 (LISTEN)
 
 ---
 
+## API example
+
+Get all pods:
+
+```console
+$ curl -s --cacert ca.pem --cert client.pem --key key.pem https://172.16.0.2:6443/api/v1/pods | jq '.items[].metadata.name'
+"nginx"
+"coredns-5c98db65d4-7d6mg"
+"coredns-5c98db65d4-hlpxx"
+"etcd-ubuntu0"
+"kube-apiserver-ubuntu0"
+"kube-controller-manager-ubuntu0"
+"kube-flannel-ds-amd64-cpvd8"
+"kube-flannel-ds-amd64-xxv5m"
+"kube-proxy-cftbs"
+"kube-proxy-xdsmx"
+"kube-scheduler-ubuntu0"
+"tiller-deploy-56c686464b-t95nf"
+"dashboard-metrics-scraper-6ff95d79d8-2s926"
+"kubernetes-dashboard-68d4968d4d-vmg6d"
+"grafana-75c5895769-8g58b"
+"prometheus-alertmanager-7f956dff49-29dng"
+"prometheus-kube-state-metrics-859fb585d5-pvtqz"
+"prometheus-node-exporter-cl4fc"
+"prometheus-pushgateway-55d9fbd64f-wz2lc"
+"prometheus-server-5f7cc875bf-qgzhp"
+```
+
+Get all secrets:
+
+```console
+$ curl -s --cacert ca.pem --cert client.pem --key key.pem https://172.16.0.2:6443/api/v1/secrets | jq '.items[4]' # remove pipe to get all secrets
+{
+  "metadata": {
+    "name": "admin-user-token-xshtw",
+    "namespace": "kube-system",
+    "selfLink": "/api/v1/namespaces/kube-system/secrets/admin-user-token-xshtw",
+    "uid": "5be439d1-1ad3-478e-9388-fdfada0c06b3",
+    "resourceVersion": "319938",
+    "creationTimestamp": "2019-07-19T10:43:11Z",
+    "annotations": {
+      "kubernetes.io/service-account.name": "admin-user",
+      "kubernetes.io/service-account.uid": "ed05d99b-ddd1-43e5-800c-fd4de957a71f"
+    }
+  },
+  "data": {
+    "ca.crt": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUN5RENDQWJDZ0F3SUJBZ0lCQURBTkJna3Foa2lHOXcwQkFRc0ZBREFWTVJNd0VRWURWUVFERXdwcmRXSmwKY201bGRHVnpNQjRYRFRFNU1EY3hOakUxTXpFeU5Gb1hEVEk1TURjeE16RTFNekV5TkZvd0ZURVRNQkVHQTFVRQpBeE1LYTNWaVpYSnVaWFJsY3pDQ0FTSXdEUVlKS29aSWh2Y05BUUVCQlFBRGdnRVBBRENDQVFvQ2dnRUJBS2Z4CklYUVQ0dFU3eTNqQ0hiN0pKdUYwbGVteTI1NGNlQ3RxZXE5TE9PdjhReVVyS29pb2NKdVE3TFBKZ3VObWNHQWIKREgzeWszM2NVSlc0MnliUnZOc1l3bUZkOXhJL0cvSEdUUCttQ3BtUUZTREc1cHAzTXVrd0IwclR3SEMxVWpDaQpRaTZCVUszNmgxQlRxRHV5TzNiZ1ZGdllXWU9icEdPZ0RGWUduY0tsMWVLZTNJQWkyWHMrdG9FVURESGJWWWQ1Cjhzc0RBdjdSd3JpdTk0MFpxN2NJamVVUnhyaG1vTjBpKzAwYXdtNXU0cDhJbk1TQzFRdjRUZkRjWFJ3cWlQTnQKZnE5Z29NRzVCbVRnWUg2VmRXTUhLeUJtYmJFcWZqSHFDYUNteUVIOW9JU2Qrd01RUUtWR29UZUFMajdHZVE4NwpQZXR6emErR0tnQmhQeE1GSzI4Q0F3RUFBYU1qTUNFd0RnWURWUjBQQVFIL0JBUURBZ0trTUE4R0ExVWRFd0VCCi93UUZNQU1CQWY4d0RRWUpLb1pJaHZjTkFRRUxCUUFEZ2dFQkFJVk1aQnd1Z3c3VitDYUhmRE05WEgwS2dFMGUKdnN5Ymd1R21XMCsxWG9wSkRwdUl3TGtiOE5FSGtjeUp4YUc5OEZPZ1FveGpvQldLVUxWL3JLLzgyWGl1YjVRVQorZ1hVTmEwQVJLZXZtcUZGMURRRmlIVkRYWFRKRlBRZEkvdk5XbDl5UDhJTmF3dW5iRmJ2MitmVFlYRzZ5VStaCjB1dVlWT25pZ2xEL2E0QzJFN0FKQTNGRGxJS0xiNjJ0eWROb0ZKdFR3eTFmZmxzUVNXVkIvYWI2K0ZHMXZkTDgKVVBoVWJuWVZmYVRjL2FCQ0JhYWVkVHByWUtYOEMwNm1uWlFqZXFRNWRwTHprL2RVdU5SL2pPSDBwVjhCOWZOeQo1SURCR0wxbnBFdEl3czgxLzlGdy9scTBPVmVILzNtSXE4MXQ2ZkthY0EwY3VBYjQ0QndiWWRQajBIQT0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=",
+    "namespace": "a3ViZS1zeXN0ZW0=",
+    "token": "ZXlKaGJHY2lPaUpTVXpJMU5pSXNJbXRwWkNJNklpSjkuZXlKcGMzTWlPaUpyZFdKbGNtNWxkR1Z6TDNObGNuWnBZMlZoWTJOdmRXNTBJaXdpYTNWaVpYSnVaWFJsY3k1cGJ5OXpaWEoyYVdObFlXTmpiM1Z1ZEM5dVlXMWxjM0JoWTJVaU9pSnJkV0psTFhONWMzUmxiU0lzSW10MVltVnlibVYwWlhNdWFXOHZjMlZ5ZG1salpXRmpZMjkxYm5RdmMyVmpjbVYwTG01aGJXVWlPaUpoWkcxcGJpMTFjMlZ5TFhSdmEyVnVMWGh6YUhSM0lpd2lhM1ZpWlhKdVpYUmxjeTVwYnk5elpYSjJhV05sWVdOamIzVnVkQzl6WlhKMmFXTmxMV0ZqWTI5MWJuUXVibUZ0WlNJNkltRmtiV2x1TFhWelpYSWlMQ0pyZFdKbGNtNWxkR1Z6TG1sdkwzTmxjblpwWTJWaFkyTnZkVzUwTDNObGNuWnBZMlV0WVdOamIzVnVkQzUxYVdRaU9pSmxaREExWkRrNVlpMWtaR1F4TFRRelpUVXRPREF3WXkxbVpEUmtaVGsxTjJFM01XWWlMQ0p6ZFdJaU9pSnplWE4wWlcwNmMyVnlkbWxqWldGalkyOTFiblE2YTNWaVpTMXplWE4wWlcwNllXUnRhVzR0ZFhObGNpSjkuaS1kTS1kUW4ybjkwNVVDNVlSZ3h0aDBDR0VNM1QySEZ3ME01X3E0a0loSXVKR1YwV290b04yMlFWVXU1LW5jQ0c1ejZwbmxSS1g2R1R1bXdNS1Awdm44M3RDU1NhM0xLVkRVWnA3el8xM3BoN2RuOUxERm1SNVJ1ald1dXFXWU05d0JMTU1lQWlNaDFWLVpzT09GM2llUS1seS13WnNmbkRLa0N5MVlrdE03OVJac2FOQ3ZTeUVuVFJLendsRDU2RWN5cGw5QVc2U0dJcWJHMzcyWGQtNVhvbUc3R2JHLXBWMll6ZnJOdlJWNnlRVENxVTNrdllYeTZpSEZXeDA5bnk1RU54YlRhbVRLSk9jTmp6X0ZidGdjanYtM1h0UzJLMUJ6YUd0NVZPWXlpN243NE5mZXFwdHJkcW1oOHo5Z2EtTWJfc2Q0SHY2VWN6bE5DdTFyNVhn"
+  },
+  "type": "kubernetes.io/service-account-token"
+}
+```
+
+Execute commands inside pod's container
+
+```console
+$ wscat --ca ca.pem --cert client.pem --key key.pem --connect "https://172.16.0.2:6443/api/v1/namespaces/default/pods/nginx/exec?command=id&container=nginx&stderr=true&stdout=true"
+connected (press CTRL+C to quit)
+<
+< uid=0(root) gid=0(root) groups=0(root)
+
+disconnected (code: 1000)
+```
+
+---
+
 - kube-scheduler api on `:10251`
 
   ```console
@@ -353,6 +420,6 @@ Mitigation:
 
 Use namespaces. Never give an account a `cluster-admin` role.
 
-If you need admin privilleges for your app(e.g. Tiller). Create a new ServiceAccount which is namespaced.
+If you need admin privilleges for your app(e.g. Tiller), create a new namespaced ServiceAccount.
 
 ---
