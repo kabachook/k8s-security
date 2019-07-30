@@ -120,7 +120,7 @@ kube-prox 2518            root   10u  IPv6  27979      0t0  TCP *:10256 (LISTEN)
 
 ## API example
 
-Get all pods:
+_Get all pods_:
 
 ```console
 $ curl -s --cacert ca.pem --cert client.pem --key key.pem https://172.16.0.2:6443/api/v1/pods | jq '.items[].metadata.name'
@@ -146,7 +146,7 @@ $ curl -s --cacert ca.pem --cert client.pem --key key.pem https://172.16.0.2:644
 "prometheus-server-5f7cc875bf-qgzhp"
 ```
 
-Get all secrets:
+_Get all secrets_:
 
 ```console
 $ curl -s --cacert ca.pem --cert client.pem --key key.pem https://172.16.0.2:6443/api/v1/secrets | jq '.items[4]' # remove pipe to get all secrets
@@ -172,7 +172,7 @@ $ curl -s --cacert ca.pem --cert client.pem --key key.pem https://172.16.0.2:644
 }
 ```
 
-Execute commands inside pod's container
+_Execute commands inside pod's container:_
 
 ```console
 $ wscat --ca ca.pem --cert client.pem --key key.pem --connect "https://172.16.0.2:6443/api/v1/namespaces/default/pods/nginx/exec?command=id&container=nginx&stderr=true&stdout=true"
@@ -182,6 +182,10 @@ connected (press CTRL+C to quit)
 
 disconnected (code: 1000)
 ```
+
+**Tip**
+
+Use `kubectl -v=7` to get curl equivalent of your qeury
 
 ---
 
@@ -410,16 +414,65 @@ Hence, ServiceAccount security is important too!
 ServiceAccount <----RoleBinding----> Role
 ```
 
-ServiceAcoount gets its permissions via RoleBinding, which is just a connection between role and account.
+ServiceAcoount gets its permissions via RoleBinding, which is a connection between role and account.
 
 In many apps it is required to create ServiceAccount with `cluster-admin` role binding, to work properly. Since `cluster-admin` role allows you to do anything in cluster, it leads to high risk of ServiceAccount token steal.
 
 For example, if you leak Helm or Dashboard account with `cluster-admin` role binding, attacker gets **full access to your cluster**
 
-Mitigation:
+_Mitigation:_
 
 Use namespaces. Never give an account a `cluster-admin` role.
 
 If you need admin privilleges for your app(e.g. Tiller), create a new namespaced ServiceAccount.
 
+Also use principle of least when creating new ServiceAccounts
+
 ---
+
+## Network policies
+
+> A network policy is a specification of how groups of pods are allowed to communicate with each other and other network endpoints.
+
+! Network policies require CNI support.
+
+Many attack vectors can be eliminated by setting up network policies. Denying egress/ingress traffic from application namespace to Tiller and Dashboards protects from the attacks desctibed above.
+
+Besides many developers do not imply any auth in their microservices/apps. Attacker would not need to elevate privilleges or capture nodes, if they could connect to your services without auth.
+
+_Limit egress traffic to namespace and whitelist kube-dns:_
+
+```console
+$ kubectl label ns default namespace=default
+$ kubectl label ns kube-system namespace=kube-system
+```
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default.egress_and_dns
+  namespace: default
+spec:
+  podSelector: {}
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              namespace: kube-system
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+      ports:
+        - protocol: UDP
+          port: 53
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              namespace: default
+  policyTypes:
+    - Egress
+```
+
+[Useful recipes](https://github.com/ahmetb/kubernetes-network-policy-recipes)
+[Good introduction](https://medium.com/@reuvenharrison/an-introduction-to-kubernetes-network-policies-for-security-people-ba92dd4c809d)
