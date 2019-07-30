@@ -71,6 +71,11 @@ Settings:
 - CRI - Docker 18.09.7
 - CNI - Flannel 0.11.0
 
+External componenets:
+
+- Kubernetes dashboard 2.0.0-beta2
+- Helm & Tiller 2.14.2
+
 ---
 
 ## What is open by default
@@ -185,7 +190,7 @@ Must be readable only for root
 
 ### Pods
 
-- `/var/run/secrets/kubernetes.io/serviceaccount/*` - default ServiceAccount token, and apiserver CA cert
+- `/var/run/secrets/kubernetes.io/serviceaccount/*` - default ServiceAccount token, and apiserver CA cert. Useless by default, if not given additional privilleges
 
 ---
 
@@ -206,8 +211,8 @@ It leads to auth bypass on dashboard, which is accessible from any pod by defaul
 Needed configuration:
 
 ```diff
---- recommended.orig.yaml	2019-07-19 15:59:14.130001048 +0300
-+++ recommended.yaml	2019-07-19 15:58:01.303334383 +0300
+--- recommended.orig.yaml
++++ recommended.yaml
 @@ -160,7 +160,7 @@
  roleRef:
    apiGroup: rbac.authorization.k8s.io
@@ -324,6 +329,24 @@ Or wait for new version 3, which [removes Tiller at all](https://github.com/helm
 
 ---
 
-## Making new ServiceAccounts
+## ServiceAccounts
 
-If you leak Helm or Dashboard account with `cluster-admin` role binding, attacker gets full access to everyhing
+ServiceAccount is a "user account for pod". It allows to do all things that regular user account can do.
+
+Frequently used in kubernetes related apps like Dashboard or Helm.
+
+Hence, ServiceAccount security is important too!
+
+### Roles and RoleBindings
+
+```
+ServiceAccount <----RoleBinding----> Role
+```
+
+ServiceAcoount gets its permissions via RoleBinding, which is just a connection between role and account
+
+In many apps it is required to create ServiceAccount with `cluster-admin` role binding, to work properly. It leads to high risk of ServiceAccount token steal.
+
+For example, if you leak Helm or Dashboard account with `cluster-admin` role binding, attacker gets **full access to your cluster**
+
+---
