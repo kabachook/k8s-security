@@ -475,4 +475,48 @@ spec:
 ```
 
 [Useful recipes](https://github.com/ahmetb/kubernetes-network-policy-recipes)
+
 [Good introduction](https://medium.com/@reuvenharrison/an-introduction-to-kubernetes-network-policies-for-security-people-ba92dd4c809d)
+
+---
+
+## Pod security policies
+
+> A Pod Security Policy is a cluster-level resource that controls security sensitive aspects of the pod specification. The PodSecurityPolicy objects define a set of conditions that a pod must run with in order to be accepted into the system, as well as defaults for the related fields.
+
+Useful conditions:
+
+- `privileged: false` - don't allow privileged pods
+- `allowPrivilegeEscalation: false` - prevent privilege escalation
+- ```yaml
+  runAsUser:
+    rule: "MustRunAsNonRoot"
+  ```
+
+  Require the container to run without root privileges
+
+- ```yaml
+  hostNetwork: false
+  hostIPC: false
+  hostPID: false
+  ```
+
+  Disallow host namespaces usage
+
+Read more conditions [here](https://kubernetes.io/docs/concepts/policy/pod-security-policy/)
+
+Also, you can enable SELinux, AppArmor, Seccomp
+
+---
+
+## Container images
+
+Rule of thumb:
+
+> Less apps/programs - less vulnurabilities
+
+[Reference](https://snyk.io/blog/top-ten-most-popular-docker-images-each-contain-at-least-30-vulnerabilities/)
+
+Always use `alpine` for your apps, add only needed packages.
+
+[Distroless](https://github.com/GoogleContainerTools/distroless) provides even better security, containing only the runtime (no bash, sh, etc)
