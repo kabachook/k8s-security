@@ -92,6 +92,11 @@ spec:
 
 More info [here](https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Docker_Security_Cheat_Sheet.md)
 
-## 6. Secure you app logic
+## 6. Manually recheck all hardenings
 
-Nothing can help, if you let attacker exploit your app. 1-5 only harden the lateral movements
+- Pod security policies won't be applied without proper admission controller
+- You won't get a warning if your CNI plugin doesn't support network policies
+
+## 7. Secure you app logic
+
+Nothing can help, if you let attacker exploit your app. 1-6 only harden the lateral movements
