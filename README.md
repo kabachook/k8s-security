@@ -547,3 +547,33 @@ It is a protocol for authentication used by many services and companies like Goo
 Also, you can set up your own OpenID Connect server, e.g. [Dex](https://github.com/dexidp/dex), and implement your own authentication logic.
 
 Not only it can be more convenient to login via providers(GitHub, Google, etc), but it save a headache of issuing many certificates and managing them.
+
+---
+
+## ENV variables
+
+By default kubernetes exposes some variables to pod:
+
+```env
+KUBERNETES_SERVICE_PORT_HTTPS=443
+KUBERNETES_SERVICE_PORT=443
+NGINX_SERVICE_PORT_80_TCP_ADDR=10.109.112.32
+NGINX_SERVICE_SERVICE_PORT_HTTP=80
+HOSTNAME=nginx
+NGINX_SERVICE_PORT_80_TCP=tcp://10.109.112.32:80
+NGINX_SERVICE_SERVICE_HOST=10.109.112.32
+PWD=/
+NGINX_SERVICE_PORT_80_TCP_PROTO=tcp
+NGINX_SERVICE_PORT_80_TCP_PORT=80
+KUBERNETES_PORT_443_TCP=tcp://10.96.0.1:443
+NGINX_SERVICE_SERVICE_PORT=80
+NGINX_SERVICE_PORT=tcp://10.109.112.32:80
+KUBERNETES_PORT_443_TCP_PROTO=tcp
+KUBERNETES_PORT_443_TCP_ADDR=10.96.0.1
+KUBERNETES_SERVICE_HOST=10.96.0.1
+KUBERNETES_PORT=tcp://10.96.0.1:443
+KUBERNETES_PORT_443_TCP_PORT=443
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+```
+
+So, be careful not to expose some secrets not needed by application to pod
