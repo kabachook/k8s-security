@@ -10,11 +10,13 @@ Disable Internet access for nodes that do not need it. (Although it can be done 
 
 Expose Ingress or load balancer instead of `NodePort`.
 
+Even though all components has TLS authentication, a sudden vulnerability can cost you a cluster.
+
 ## 2. Use RBAC
 
 Create new ServiceAccount for every component which requires querying API.
 
-Limit allowed verbs and resources. Use principle of least privillege.
+Limit allowed verbs and resources. Use principle of least privilege.
 
 ## 3. Use network policies
 
@@ -79,11 +81,11 @@ spec:
   readOnlyRootFilesystem: false
 ```
 
-## 5. Follow container security best practicies
+## 5. Follow container security best practices
 
 - Never run as root
 - Update images
-- Scan images on vulnurabilities
+- Scan images on vulnerabilities
 - Use minimal image like `alpine`, or even better [`distroless`](https://github.com/GoogleContainerTools/distroless)
 - Never mount `docker.sock`, `kubelet`'s dirs, etc to container
 - ...
@@ -92,4 +94,4 @@ More info [here](https://github.com/OWASP/CheatSheetSeries/blob/master/cheatshee
 
 ## 6. Secure you app logic
 
-Nothing can help, if you let attacker exploit your app. 1-5 only harden the latheral movements
+Nothing can help, if you let attacker exploit your app. 1-5 only harden the lateral movements
