@@ -535,3 +535,15 @@ Rule of thumb:
 Always use `alpine` for your apps, add only needed packages.
 
 [Distroless](https://github.com/GoogleContainerTools/distroless) provides even better security, containing only the runtime (no bash, sh, etc)
+
+---
+
+## Multi user
+
+When you have many users managing the cluster, you have to store and issue authentication certificates somewhere. It may not be easy sometimes, luckily kubernetes supports OpenID Connect.
+
+It is a protocol for authentication used by many services and companies like Google.
+
+Also, you can set up your own OpenID Connect server, e.g. [Dex](https://github.com/dexidp/dex), and implement your own authentication logic.
+
+Not only it can be more convenient to login via providers(GitHub, Google, etc), but it save a headache of issuing many certificates and managing them.
