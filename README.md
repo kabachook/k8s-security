@@ -8,7 +8,7 @@
 - `/entrypoint.sh`,`/app-entrypoint.sh`
 - strange hostname looking like hex string `de605c442545`
 - PID 1 process is application process or small init system like `dumb-init`
-- `cat /proc/self/cgroup` shows that we are in cgoup
+- `cat /proc/self/cgroup` shows that we are in cgroup
 
   Example:
 
@@ -71,7 +71,7 @@ Settings:
 - CRI - Docker 18.09.7
 - CNI - Flannel 0.11.0
 
-External componenets:
+External components:
 
 - Kubernetes dashboard 2.0.0-beta2
 - Helm & Tiller 2.14.2
@@ -105,7 +105,7 @@ kube-prox 2518            root   10u  IPv6  27979      0t0  TCP *:10256 (LISTEN)
 | ----- | ----------------------- | ---------------------------------------------------------------- | ------------------------------------------------- |
 | 6443  | kube-apiserver          | k8s API for user interaction                                     | `kubectl ...` or `curl https://ip:6443/`          |
 | 10250 | kubelet                 | k8s node agent                                                   | `curl https://ip:10250/{metrics,stats,logs,spec}` |
-| 10251 | kube-scheduler          | k8s pod sheduler, exposes some metrics in prometheus format      | `curl http://ip:10251/metrics`                    |
+| 10251 | kube-scheduler          | k8s pod scheduler, exposes some metrics in prometheus format     | `curl http://ip:10251/metrics`                    |
 | 10252 | kube-controller-manager | k8s control loop to reach desired cluster state, exposes metrics | `curl http://ip:10252/metrics`                    |
 | 10256 | kube-proxy              | k8s proxy for port forwarding                                    | -                                                 |
 
@@ -207,7 +207,7 @@ Use `kubectl -v=7` to get curl equivalent of your qeury
 Compared to previous versions of k8s:
 
 - All `kubelet`'s are using auth now
-- Can't query anything with default ServiceAccout token in pods
+- Can't query anything with default ServiceAccount token in pods
 
 => Pretty secure(?)
 
@@ -221,9 +221,9 @@ However
 
 - No auth logging set up
 - No pods interconnection policies
-- No run as non-root container enforcment
+- No run as non-root container enforcement
 - No egress traffic restriction to `kube-system` namespace
-- ServiceAccout tokens still present on pods (`automountServiceAccountToken:false`)
+- ServiceAccount tokens still present on pods (`automountServiceAccountToken:false`)
 - No automatic certificate rotation
 
 ---
@@ -232,9 +232,9 @@ However
 
 For both master and node
 
-- `/etc/kubernetes/*.conf` - credentials for apiserver of componenets(including cluster admin config!)
+- `/etc/kubernetes/*.conf` - credentials for apiserver of components(including cluster admin config!)
 - `/etc/kubernetes/manifests/*.yaml` - cluster components(etcd, apiserver, control-manager, scheduler) configs
-- `/etc/kubernetes/pki/**/*` - certs and keys for all componenets
+- `/etc/kubernetes/pki/**/*` - certs and keys for all components
 - `/var/lib/kubelet/**/*` - kubelet files
 
 Everything should be readable only for root and k8s admin user(if present)
@@ -251,8 +251,8 @@ Must be readable only for root
 ### Master
 
 - `/etc/kubernetes/admin.conf` - cluster admin credentials
-- `/etc/kubernetes/{kubelet,control-manager,scheduler}.conf` - componenets credentials
-- `/etc/kubernetes/pki` - PKI folder, contains keys and CA, keys for apiserver and other componenets
+- `/etc/kubernetes/{kubelet,control-manager,scheduler}.conf` - components credentials
+- `/etc/kubernetes/pki` - PKI folder, contains keys and CA, keys for apiserver and other components
 - `/var/lib/kubelet/config.yaml` - kubelet config (includes CA path)
 
 ### Nodes
@@ -261,7 +261,7 @@ Must be readable only for root
 
 ### Pods
 
-- `/var/run/secrets/kubernetes.io/serviceaccount/*` - default ServiceAccount token, and apiserver CA cert. Useless by default, if not given additional privilleges
+- `/var/run/secrets/kubernetes.io/serviceaccount/*` - default ServiceAccount token, and apiserver CA cert. Useless by default, if not given additional privileges
 
 ---
 
@@ -275,7 +275,7 @@ Need to create a user with admin binding to access metrics
 
 ---
 
-As per manual some admins may give `kubernetes-dashboard` acoount `admin-cluster` role ([Source](https://github.com/kubernetes/dashboard/wiki/Access-control#admin-privileges)) and set `--enable-skip-flag` (set by default on versions <2.0).
+As per manual some admins may give `kubernetes-dashboard` account `admin-cluster` role ([Source](https://github.com/kubernetes/dashboard/wiki/Access-control#admin-privileges)) and set `--enable-skip-flag` (set by default on versions <2.0).
 
 It leads to auth bypass on dashboard, which is accessible from any pod by default
 
@@ -305,6 +305,46 @@ Needed configuration:
 ```
 
 ![Skip button](/imgs/dashboard_skip.png)
+
+---
+
+## Helm
+
+By default doesn't use TLS and X509 authorization
+
+So, given access to some pod, we can run our malicious chart to take nodes
+
+1. Download Helm
+2. Get Tiller ip, thanks to kube-dns. `dig tiller-deploy.kube-system.svc.cluster.local`
+3. `./helm --host tiller-deploy.kube-system.svc.cluster.local:44134 install pwnchart.tar.gz ...`
+
+Demo [here](./imgs/helm_pwn.svg)
+
+Mitigation:
+
+If you don't want to use TLS remove Tiller service and patch deployment to listen only on localhost
+
+```console
+$ kubectl -n kube-system delete service tiller-deploy
+$ kubectl -n kube-system patch deployment tiller-deploy --patch '
+spec:
+  template:
+    spec:
+      containers:
+        - name: tiller
+          ports: []
+          command: ["/tiller"]
+          args: ["--listen=localhost:44134"]
+'
+```
+
+Helm CLI uses port-forward via k8s api to reach tiller
+
+Else enable TLS
+
+More [here](https://engineering.bitnami.com/articles/helm-security.html)
+
+Or wait for new version 3, which [removes Tiller at all](https://github.com/helm/community/blob/master/helm-v3/000-helm-v3.md).
 
 ---
 
@@ -360,43 +400,18 @@ PING 10.111.128.195 (10.111.128.195): 56 data bytes
 
 ---
 
-## Helm
+## ETCD
 
-By default doesn't use TLS and X509 authorization
+`etcd` is a key-value storage for kubernetes needs. It contains all secrets and other info.
 
-So, given access to some pod, we can run our malicious chart to take nodes
+It is a common attack vector for taking down kubernetes cluster.
 
-1. Download Helm
-2. Get Tiller ip, thanks to kube-dns. `dig tiller-deploy.kube-system.svc.cluster.local`
-3. `./helm --host tiller-deploy.kube-system.svc.cluster.local:44134 install pwnchart.tar.gz ...`
+At least since version `1.15` etcd is secured by default:
 
-Demo [here](./imgs/helm_pwn.svg)
+- Ports listening only on `127.0.0.1` and your external interface
+- Uses peer TLS authentication
 
-Mitigation:
-
-If you don't want to use TLS remove Tiller service and patch deployment to listen only on localhost
-
-```console
-$ kubectl -n kube-system delete service tiller-deploy
-$ kubectl -n kube-system patch deployment tiller-deploy --patch '
-spec:
-  template:
-    spec:
-      containers:
-        - name: tiller
-          ports: []
-          command: ["/tiller"]
-          args: ["--listen=localhost:44134"]
-'
-```
-
-Helm CLI uses port-forward via k8s api to reach tiller
-
-Else enable TLS
-
-More [here](https://engineering.bitnami.com/articles/helm-security.html)
-
-Or wait for new version 3, which [removes Tiller at all](https://github.com/helm/community/blob/master/helm-v3/000-helm-v3.md).
+If your cluster is _directly exposed_ to the Internet (your external interface has public ip), you **SHOULD** close ports and change config to listen only on `127.0.0.1` and your internal ip accessible by `kube-apiserver`. Otherwise it may lead to cluster takedown, even though it has TLS authn.
 
 ---
 
@@ -414,7 +429,7 @@ Hence, ServiceAccount security is important too!
 ServiceAccount <----RoleBinding----> Role
 ```
 
-ServiceAcoount gets its permissions via RoleBinding, which is a connection between role and account.
+ServiceAccount gets its permissions via RoleBinding, which is a connection between role and account.
 
 In many apps it is required to create ServiceAccount with `cluster-admin` role binding, to work properly. Since `cluster-admin` role allows you to do anything in cluster, it leads to high risk of ServiceAccount token steal.
 
@@ -424,7 +439,7 @@ _Mitigation:_
 
 Use namespaces. Never give an account a `cluster-admin` role.
 
-If you need admin privilleges for your app(e.g. Tiller), create a new namespaced ServiceAccount.
+If you need admin privileges for your app(e.g. Tiller), create a new namespaced ServiceAccount.
 
 Also use principle of least when creating new ServiceAccounts
 
@@ -436,9 +451,9 @@ Also use principle of least when creating new ServiceAccounts
 
 ! Network policies require CNI support.
 
-Many attack vectors can be eliminated by setting up network policies. Denying egress/ingress traffic from application namespace to Tiller and Dashboards protects from the attacks desctibed above.
+Many attack vectors can be eliminated by setting up network policies. Denying egress/ingress traffic from application namespace to Tiller and Dashboards protects from the attacks described above.
 
-Besides many developers do not imply any auth in their microservices/apps. Attacker would not need to elevate privilleges or capture nodes, if they could connect to your services without auth.
+Besides many developers do not imply any auth in their microservices/apps. Attacker would not need to elevate privileges or capture nodes, if they could connect to your services without auth.
 
 _Limit egress traffic to namespace and whitelist kube-dns:_
 
@@ -513,7 +528,7 @@ Also, you can enable SELinux, AppArmor, Seccomp
 
 Rule of thumb:
 
-> Less apps/programs - less vulnurabilities
+> Less apps/programs - less vulnerabilities
 
 [Reference](https://snyk.io/blog/top-ten-most-popular-docker-images-each-contain-at-least-30-vulnerabilities/)
 
