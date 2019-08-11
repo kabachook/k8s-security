@@ -577,3 +577,60 @@ PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 ```
 
 So, be careful not to expose some secrets not needed by application to pod
+
+---
+
+## Audit logs
+
+> Audit policy defines rules about what events should be recorded and what data they should include.
+
+[More](https://kubernetes.io/docs/tasks/debug-application-cluster/audit/)
+
+_Sample policy which records all requests at metadata level:_
+
+```yaml
+apiVersion: audit.k8s.io/v1beta1
+kind: Policy
+rules:
+  - level: Metadata
+```
+
+Example log line:
+
+```json
+{
+  "kind": "Event",
+  "apiVersion": "audit.k8s.io/v1beta1",
+  "metadata": { "creationTimestamp": "2017-09-11T20:01:37Z" },
+  "level": "Metadata",
+  "timestamp": "2017-09-11T20:01:37Z",
+  "auditID": "524c5a19-63b0-4af8-acc7-bf75fdad18dc",
+  "stage": "ResponseComplete",
+  "requestURI": "/api/v1/pods",
+  "verb": "list",
+  "user": {
+    "username": "system:admin",
+    "groups": ["system:masters", "system:authenticated"]
+  },
+  "impersonatedUser": {
+    "username": "system:serviceaccount:ns1:sa1",
+    "groups": [
+      "system:serviceaccounts",
+      "system:serviceaccounts:ns1",
+      "system:authenticated"
+    ]
+  },
+  "sourceIPs": ["::1"],
+  "objectRef": { "resource": "pods", "apiVersion": "v1" },
+  "responseStatus": {
+    "metadata": {},
+    "status": "Failure",
+    "message": "pods is forbidden: User \"system:serviceaccount:ns1:sa1\" cannot list pods at the cluster scope",
+    "reason": "Forbidden",
+    "details": { "kind": "pods" },
+    "code": 403
+  }
+}
+```
+
+Use [audit2rbac](https://github.com/liggitt/audit2rbac) to generate RBAC manifest out of audit log file for your app
