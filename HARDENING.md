@@ -1,17 +1,8 @@
 # Thing you must do secure your cluster
 
-- [Thing you must do secure your cluster](#thing-you-must-do-secure-your-cluster)
-  - [1. Firewall your cluster](#1-firewall-your-cluster)
-  - [2. Use RBAC](#2-use-rbac)
-  - [3. Use network policies](#3-use-network-policies)
-  - [4. Use pod security policies](#4-use-pod-security-policies)
-  - [5. Follow container security best practices](#5-follow-container-security-best-practices)
-  - [6. Manually recheck all hardenings](#6-manually-recheck-all-hardenings)
-  - [7. Secure you app logic](#7-secure-you-app-logic)
+## Firewall your cluster
 
-## 1. Firewall your cluster
-
-Do not expose control-plane _at all_. Use vpn or [bastion host](https://en.wikipedia.org/wiki/Bastion_host) to connect to your cluster.
+Do not expose control-plane _at all_. You must not run your apps on master node. Use vpn or [bastion host](https://en.wikipedia.org/wiki/Bastion_host) to connect to your cluster.
 
 If you need to use `NodePort`, use whitelist.
 
@@ -21,17 +12,17 @@ Expose Ingress or load balancer instead of `NodePort`.
 
 Even though all components has TLS authentication, a sudden vulnerability can cost you a cluster.
 
-## 2. Use RBAC
+## Use RBAC
 
 Create new ServiceAccount for every component which requires querying API.
 
 Limit allowed verbs and resources. Use principle of least privilege.
 
-## 3. Use network policies
+## Use network policies
 
 Isolate ingress and egress traffic to other namespaces **and** Internet . By default pod can communicate with other pod in **any** other namespace. Thus, pods can query other apps or 3rd party components (Dashboard, Tiller), which may be insecure and lead to token stealing.
 
-## 4. Use pod security policies
+## Use pod security policies
 
 No containers must be run as root or mount `/` as read-only.
 
@@ -90,7 +81,7 @@ spec:
   readOnlyRootFilesystem: false
 ```
 
-## 5. Follow container security best practices
+## Follow container security best practices
 
 - Never run as root
 - Update images
@@ -101,11 +92,39 @@ spec:
 
 More info [here](https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Docker_Security_Cheat_Sheet.md)
 
-## 6. Manually recheck all hardenings
+## Protect against external attacks
+
+If you are not sure about the security of the underlying network of cloud infrastructure, or your nodes communicate via the Internet(:scream:).
+
+Possible attacks are:
+
+- Man-in-the-middle attack (ARP spoofing, DHCP/DHCPv6 spoofing, etc)
+- Somebody stoles your disks
+
+Recommendations:
+
+- Encrypt network communications via CNI plugin.
+
+For example: use [Linkerd](https://linkerd.io/) which encrypts _by default_ with no pain
+
+- Encrypt secrets
+
+[k8s docs article](https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/)
+
+Do not forget:
+
+> Storing the raw encryption key in the EncryptionConfig only moderately improves your security posture, compared to no encryption. Please use kms provider for additional security.
+
+Another solution can be [HashiCorp's Vault](https://itnext.io/effective-secrets-with-vault-and-kubernetes-9af5f5c04d06), if you want to distribute secrets to your apps
+
+- Enable TLS/mTLS everywhere in the cluster
+- Apply encryption to your apps/databases to protect your data
+
+## Manually recheck all hardenings
 
 - Pod security policies won't be applied without proper admission controller
 - You won't get a warning if your CNI plugin doesn't support network policies
 
-## 7. Secure you app logic
+## Secure you app logic
 
 Nothing can help, if you let attacker exploit your app. 1-6 only harden the lateral movements
