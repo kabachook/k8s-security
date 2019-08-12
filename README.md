@@ -357,6 +357,30 @@ At least since version `1.15` etcd is secured by default:
 
 If your cluster is _directly exposed_ to the Internet (your external interface has public ip), you **SHOULD** close ports and change config to listen only on `127.0.0.1` and your internal ip accessible by `kube-apiserver`. Otherwise it may lead to cluster takedown, even though it has TLS authn.
 
+### Encryption at rest
+
+Use `secretbox` as encryption provider, as it is recommended by kubernetes developers.
+
+Remember:
+
+> Storing the raw encryption key in the EncryptionConfig only moderately improves your security posture, compared to no encryption. Please use kms provider for additional security.
+
+A better solution is `kms` provider, but it requires additional set up.
+
+[Encryption at rest](https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/)
+
+[KMS provider](https://kubernetes.io/docs/tasks/administer-cluster/kms-provider/)
+
+### Single CA for all cluster
+
+If you have a single CA for issuing all certificates, an attacker using any client certificate(`kubelet`, admin, scheduler, etc) is able to query `etcd` even if he is not allowed to use API.
+
+That happens because `etcd` trusts all certs issued by the only CA.
+
+Solution: use another PKI for `apiserver<->etcd` communication. It is default behavior for `kubeadm`.
+
+Hardening: use whitelist to only allow `apiserver` to query `etcd`
+
 ---
 
 ## ServiceAccounts
