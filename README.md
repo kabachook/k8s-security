@@ -180,6 +180,7 @@ For both master and node
 - `/etc/kubernetes/manifests/*.yaml` - cluster components(etcd, apiserver, control-manager, scheduler) configs
 - `/etc/kubernetes/pki/**/*` - certs and keys for all components
 - `/var/lib/kubelet/**/*` - kubelet files
+- `/var/lib/kubelet/config.yaml` - kubelet config (includes CA path)
 
 Everything should be readable only for root and k8s admin user(if present)
 Exception: all `*.crt` files can be public
@@ -201,7 +202,7 @@ Must be readable only for root
 
 ### Nodes
 
-- `/var/lib/kubelet/config.yaml` - kubelet config (includes CA path)
+- `/etc/kubernetes/kubelet.conf` - credentials for kubelet
 
 ### Pods
 
