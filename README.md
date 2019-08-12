@@ -552,6 +552,8 @@ So, be careful not to expose some secrets not needed by application to pod
 
 > Audit policy defines rules about what events should be recorded and what data they should include.
 
+It is useful if and only if you somehow analyze these logs.
+
 [More](https://kubernetes.io/docs/tasks/debug-application-cluster/audit/)
 
 _Sample policy which records all requests at metadata level:_
@@ -564,6 +566,8 @@ rules:
 ```
 
 Example log line:
+
+_List pods_
 
 ```json
 {
@@ -600,5 +604,61 @@ Example log line:
   }
 }
 ```
+
+_List secrets_
+
+```json
+[
+  {
+    "kind": "Event",
+    "apiVersion": "audit.k8s.io/v1",
+    "level": "Metadata",
+    "auditID": "d3d74e6d-000e-4d62-9add-322602e4fd07",
+    "stage": "RequestReceived",
+    "requestURI": "/api/v1/secrets?limit=500",
+    "verb": "list",
+    "user": {
+      "username": "bob@example.com",
+      "groups": ["system:authenticated"]
+    },
+    "sourceIPs": ["10.8.0.2"],
+    "userAgent": "kubectl/v1.15.0 (linux/amd64) kubernetes/e8462b5",
+    "objectRef": { "resource": "secrets", "apiVersion": "v1" },
+    "requestReceivedTimestamp": "2019-08-12T11:09:27.425610Z",
+    "stageTimestamp": "2019-08-12T11:09:27.425610Z"
+  },
+  {
+    "kind": "Event",
+    "apiVersion": "audit.k8s.io/v1",
+    "level": "Metadata",
+    "auditID": "d3d74e6d-000e-4d62-9add-322602e4fd07",
+    "stage": "ResponseComplete",
+    "requestURI": "/api/v1/secrets?limit=500",
+    "verb": "list",
+    "user": {
+      "username": "bob@example.com",
+      "groups": ["system:authenticated"]
+    },
+    "sourceIPs": ["10.8.0.2"],
+    "userAgent": "kubectl/v1.15.0 (linux/amd64) kubernetes/e8462b5",
+    "objectRef": { "resource": "secrets", "apiVersion": "v1" },
+    "responseStatus": { "metadata": {}, "code": 200 },
+    "requestReceivedTimestamp": "2019-08-12T11:09:27.425610Z",
+    "stageTimestamp": "2019-08-12T11:09:27.437641Z",
+    "annotations": {
+      "authorization.k8s.io/decision": "allow",
+      "authorization.k8s.io/reason": "RBAC: allowed by ClusterRoleBinding \"bd-binding\" of ClusterRole \"cluster-admin\" to User \"bob@example.com\""
+    }
+  }
+]
+```
+
+Interesting fields to analyze:
+
+- `"verb": "create"/"list"/"get"/"delete"` - actions
+- `"sourceIPs": ["::1","127.0.0.1"]` - request source IP. Should be suspicious if query source is pod ip or external ip.
+- `"userAgent": "kubectl/v1.15.0 (linux/amd64) kubernetes/e8462b5"` - request User Agent. Should be suspicious if UA is `kubectl`, `curl`, browser, etc
+- `"objectRef.resource"` - kubernetes resource (`secrets`,`pods`,etc)
+- `"annotations.authorization*"` - RBAC decision annotation - allow/disallow and reason
 
 Use [audit2rbac](https://github.com/liggitt/audit2rbac) to generate RBAC manifest out of audit log file for your app
