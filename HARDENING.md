@@ -1,5 +1,14 @@
 # Thing you must do secure your cluster
 
+- [Thing you must do secure your cluster](#thing-you-must-do-secure-your-cluster)
+  - [1. Firewall your cluster](#1-firewall-your-cluster)
+  - [2. Use RBAC](#2-use-rbac)
+  - [3. Use network policies](#3-use-network-policies)
+  - [4. Use pod security policies](#4-use-pod-security-policies)
+  - [5. Follow container security best practices](#5-follow-container-security-best-practices)
+  - [6. Manually recheck all hardenings](#6-manually-recheck-all-hardenings)
+  - [7. Secure you app logic](#7-secure-you-app-logic)
+
 ## 1. Firewall your cluster
 
 Do not expose control-plane _at all_. Use vpn or [bastion host](https://en.wikipedia.org/wiki/Bastion_host) to connect to your cluster.
