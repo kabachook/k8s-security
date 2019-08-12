@@ -135,6 +135,10 @@ Useful fields in [notes](./README.md)
 - Pod security policies won't be applied without proper admission controller
 - You won't get a warning if your CNI plugin doesn't support network policies
 
+## Monitor github issues and security announces for vulnerabilities
+
+See [here](./VULN.md)
+
 ## Secure you app logic
 
 Nothing can help, if you let attacker exploit your app. 1-6 only harden the lateral movements
