@@ -12,6 +12,10 @@ Expose Ingress or load balancer instead of `NodePort`.
 
 Even though all components has TLS authentication, a sudden vulnerability can cost you a cluster.
 
+### etcd
+
+`etcd` **SHOULD NOT** be available for anything other that `apiserver`
+
 ## Use RBAC
 
 Create new ServiceAccount for every component which requires querying API.
@@ -24,7 +28,7 @@ Isolate ingress and egress traffic to other namespaces **and** Internet . By def
 
 ## Use pod security policies
 
-No containers must be run as root or mount `/` as read-only.
+No containers must be run as root and mount `/` as read-only if possible.
 
 This will harden attacker's life.
 
@@ -119,6 +123,12 @@ Another solution can be [HashiCorp's Vault](https://itnext.io/effective-secrets-
 
 - Enable TLS/mTLS everywhere in the cluster
 - Apply encryption to your apps/databases to protect your data
+
+## Set up audit logs
+
+Send authn/authz logs to log collector and analyze them.
+
+Useful fields in [notes](./README.md)
 
 ## Manually recheck all hardenings
 
