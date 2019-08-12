@@ -4,7 +4,7 @@ By default `kubeadm` bootstraps all these flags, but it may differ in other dist
 
 > Flags values are default `kubeadm` installation, check if it works on your cluster beforehand
 
-## TLS
+## TLS authentication
 
 Flags needed for TLS to work
 
@@ -82,7 +82,7 @@ users:
 >
 > Probe container command:
 >
-> `ETCDCTL_API=3 etcdctl --endpoints=https://[127.0.0.1]:2379 --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/healthcheck-client.crt --key=/etc/kubernetes/pki/etcd/healthcheck-client.keyget foo`
+> `ETCDCTL_API=3 etcdctl --endpoints=https://[127.0.0.1]:2379 --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/healthcheck-client.crt --key=/etc/kubernetes/pki/etcd/healthcheck-client.key get foo`
 
 ### kube-controller-manager
 
@@ -104,3 +104,20 @@ users:
 - `--kubeconfig=/etc/kubernetes/scheduler.conf`
 
 `/etc/kubernetes/scheduler.conf` should be present with credentials
+
+## Authorization
+
+Flags needed for authorization to work
+
+### kube-apiserver
+
+- `--authorization-mode=Node,RBAC`
+
+### kubelet
+
+Webhook is needed for authorization to work on `kubelet`
+
+```yaml
+authorization:
+  mode: Webhook
+```
