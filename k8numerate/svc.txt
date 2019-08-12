@@ -1,0 +1,11 @@
+kubernetes.default.svc.cluster.local
+kube-dns.kube-system.svc.cluster.local
+kubernetes-dashboard.default.svc.cluster.local
+kubernetes-dashboard.kubernetes-dashboard.svc.cluster.local
+kubernetes-dashboard.kube-system.svc.cluster.local
+tiller-deploy.kube-system.svc.cluster.local
+tiller-deploy.default.svc.cluster.local
+kubernator.kubernator.svc.cluster.local
+grafana.default.svc.cluster.local
+grafana.monitoring.svc.cluster.local
+ingress-nginx.ingress-nginx.svc.cluster.local

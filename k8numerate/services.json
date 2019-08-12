@@ -1,0 +1,37 @@
+[
+  {
+    "description": "Default kubernetes apiserver service",
+    "name": ["kubernetes"],
+    "namespace": ["default"]
+  },
+  {
+    "description": "Default kube-dns service",
+    "name": ["kube-dns"],
+    "namespace": ["kube-system"]
+  },
+  {
+    "description": "Kubernetes dashboard service",
+    "name": ["kubernetes-dashboard"],
+    "namespace": ["default", "kubernetes-dashboard", "kube-system"]
+  },
+  {
+    "description": "Tiller (Helm v2 server-side component) service",
+    "name": ["tiller-deploy"],
+    "namespace": ["kube-system", "default"]
+  },
+  {
+    "description": "Kubernator service",
+    "name": ["kubernator"],
+    "namespace": ["kubernator"]
+  },
+  {
+    "description": "Grafana service",
+    "name": ["grafana"],
+    "namespace": ["default", "monitoring"]
+  },
+  {
+    "description": "Nginx ingress service",
+    "name": ["ingress-nginx"],
+    "namespace": ["ingress-nginx"]
+  }
+]
