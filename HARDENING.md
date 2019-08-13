@@ -128,7 +128,7 @@ Another solution can be [HashiCorp's Vault](https://itnext.io/effective-secrets-
 
 Send authn/authz logs to log collector and analyze them.
 
-Useful fields in [notes](./README.md)
+Useful fields in [notes](./NOTES.md)
 
 ## Manually recheck all hardenings
 

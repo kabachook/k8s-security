@@ -32,7 +32,7 @@ ServiceAccount can be in forms:
 - CA certificate + JWT token (usually on containers, `Webhook` authn)
 - CA certificate + client certificate + client key (usually in `.yaml` files as base64encoded strings, `TLS` authn)
 
-With any form you can query `apiserver` by http with, e.g `curl`. See [readme](./README.md) for second form usage examples, and k8s docs for `Webhook`.
+With any form you can query `apiserver` by http with, e.g `curl`. See [notes](./NOTES.md) for second form usage examples, and k8s docs for `Webhook`.
 
 ## How to know we are in...
 
