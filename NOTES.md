@@ -353,7 +353,7 @@ PING 10.111.128.195 (10.111.128.195): 56 data bytes
 
 It is a common attack vector for taking down kubernetes cluster.
 
-At least since version `1.15` etcd is secured by default:
+At least since `kubeadm` version `1.15`:
 
 - Ports listening only on `127.0.0.1` and your external interface
 - Uses peer TLS authentication
