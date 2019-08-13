@@ -30,7 +30,7 @@ The research was conducted during Summer of hack internship.
 
 ## Tools
 
-- [k8numerator](./k8numerator/README.md)
+- [k8numerator](./k8numerate/README.md)
 
   Script for enumerating services in kubernetes cluster. Common services dictionary provided.
 
