@@ -303,12 +303,18 @@ Provides simple service(and more) resolution by name
 
 `<service>.<ns>.svc.<zone>. <ttl> IN A <cluster-ip>`
 
+All commands below running from pod `nginx` in `default` namespace
+
+_Query kube-dns pod ip from pod_:
+
 ```console
 $ dig kube-dns.kube-system.svc.cluster.local +short
 10.96.0.10
 ```
 
 However no ping and route:
+
+_Ping from pod to kube-dns pod_:
 
 ```console
 # ping 10.96.0.10
@@ -328,6 +334,8 @@ uid=0(root) gid=0(root) groups=0(root),1(bin),2(daemon),3(sys),4(adm),6(disk),10
 
 **BUT!**
 
+_Query and ping `kubernetes-dashboard` pod ip of namespace `kubernetes-dashboard` from pod_:
+
 ```console
 # dig kubernetes-dashboard.kubernetes-dashboard.svc.cluster.local +short
 10.111.128.195
@@ -336,6 +344,11 @@ PING 10.111.128.195 (10.111.128.195): 56 data bytes
 ^C
 --- 10.111.128.195 ping statistics ---
 2 packets transmitted, 0 packets received, 100% packet loss
+```
+
+_HTTPS request to `kubernetes-dashboard`_:
+
+```console
 # curl -sk https://10.111.128.195
 <!doctype html>
 <html>
