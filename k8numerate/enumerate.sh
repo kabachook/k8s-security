@@ -1,14 +1,8 @@
 #!/usr/bin/env bash
 # set -o nounset
 set -o errexit
-# trap 'echo "Aborting due to errexit on line $LINENO. Exit code: $?" >&2' ERR
 # set -o errtrace
 set -o pipefail
-
-# Set $IFS to only newline and tab.
-#
-# http://www.dwheeler.com/essays/filenames-in-shell.html
-# IFS=$'\n\t'
 
 
 _ME=$(basename "${0}")
@@ -66,7 +60,7 @@ query(){
 }
 
 query_srv(){
-    eval "$_QUERY_COMMAND $QUERY_SRV_ARG $1 $_QUERY_SRV_POST"
+    eval "$_QUERY_COMMAND $_QUERY_SRV_ARG $1 $_QUERY_SRV_POST"
 }
 
 main(){
@@ -77,8 +71,8 @@ main(){
     while IFS= read -r line
     do
         verbose echo "$line"
-        query "$line"
-        query_srv "$line"
+        ! query "$line"
+        ! query_srv "$line"
     done < "$input"
     
 }
