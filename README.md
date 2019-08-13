@@ -1,6 +1,8 @@
 # Kubernetes security
 
-This repo is a collection of kubernetes security stuff.
+This repo is a collection of kubernetes security stuff and research.
+
+The research was conducted during Summer of hack internship.
 
 ## Overview
 
@@ -25,3 +27,7 @@ This repo is a collection of kubernetes security stuff.
 - [Vulnerabilities](./VULN.md)
 
   Page with sources for security announces and previous vulnerabilities
+
+## Presentations
+
+- [Midterm](https://docs.google.com/presentation/d/1_D1fyl_DO0SGn3lh2lsEGMplRc9TegX8pEhVF9hnX_0/edit?usp=sharing)
