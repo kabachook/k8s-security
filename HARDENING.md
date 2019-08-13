@@ -139,6 +139,10 @@ Useful fields in [notes](./README.md)
 
 See [here](./VULN.md)
 
+## Never run apps on master node
+
+Causes direct exposure to all services running locally on master(`etcd`, `kube-scheduler`)
+
 ## Secure you app logic
 
 Nothing can help, if you let attacker exploit your app. 1-6 only harden the lateral movements
