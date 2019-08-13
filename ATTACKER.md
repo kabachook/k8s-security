@@ -55,3 +55,36 @@
   ```
 
   But, there is an option that k8s controls cgroups via systemd
+
+## Addons attacks
+
+Prerequisite:
+
+- dns queries are not blocked
+- no network policy blocking connection
+
+### Helm
+
+Given no TLS was configured you can use Helm as an admin
+
+1. Download helm cli
+
+```console
+$ wget https://get.helm.sh/helm-v2.14.3-linux-amd64.tar.gz
+$ tar xfv helm-v2.14.3-linux-amd64.tar.gz
+```
+
+2. Use helm
+
+```console
+$ ./helm --host tiller-deploy.kube-system.svc.cluster.local:44134
+```
+
+[Demo](./imgs/helm_pwn.svg)
+
+### Dashboard
+
+If **`cluster-admin` role** is given to dashboard serviceaccount and `--enable-skip-login` is set, then you can bypass login in kubernetes dashboard
+
+1. Just go to `https://kubernetes-dashboard.kubernetes-dashboard.svc.cluster.local`
+2. Click `skip` button
