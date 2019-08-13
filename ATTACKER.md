@@ -135,3 +135,11 @@ If **`cluster-admin` role** is given to dashboard serviceaccount and `--enable-s
 
 1. Just go to `https://kubernetes-dashboard.kubernetes-dashboard.svc.cluster.local`
 2. Click `skip` button
+
+## Container attacks
+
+Never forget about typical container(Docker) attacks:
+
+- Mounted `docker.sock` => root on node
+- Mounted `/var/lib/kubelet/` dir => kubelet account (get secrets, pods _by name_)
+- Pod running on master => direct exposure to `etcd`
