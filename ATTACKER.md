@@ -90,7 +90,20 @@ With any form you can query `apiserver` by http with, e.g `curl`. See [readme](.
 
   But, there is an option that k8s controls cgroups via systemd
 
-## Addons attacks
+- run `mount`
+
+  Example:
+
+  ```
+  ...
+  cgroup on /sys/fs/cgroup/cpu,cpuacct type cgroup (ro,nosuid,nodev,noexec,relatime,cpu,cpuacct)
+  cgroup on /sys/fs/cgroup/blkio type cgroup (ro,nosuid,nodev,noexec,relatime,blkio)
+  cgroup on /sys/fs/cgroup/memory type cgroup (ro,nosuid,nodev,noexec,relatime,memory)
+  ...
+  tmpfs on /run/secrets/kubernetes.io/serviceaccount type tmpfs (ro,relatime)
+  ```
+
+## Addon attacks
 
 Prerequisite:
 
