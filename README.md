@@ -28,6 +28,12 @@ The research was conducted during Summer of hack internship.
 
   Page with sources for security announces and previous vulnerabilities
 
+## Tools
+
+- [k8numerator](./k8numerator/README.md)
+
+  Script for enumerating services in kubernetes cluster. Common services dictionary provided.
+
 ## Presentations
 
 - [Midterm](https://docs.google.com/presentation/d/1_D1fyl_DO0SGn3lh2lsEGMplRc9TegX8pEhVF9hnX_0/edit?usp=sharing)
