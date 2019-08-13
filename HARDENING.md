@@ -16,6 +16,12 @@ Even though all components has TLS authentication, a sudden vulnerability can co
 
 `etcd` **SHOULD NOT** be available for anything other that `apiserver`
 
+### Cloud provider metadata API
+
+You **SHOULD BLOCK** any requests to your cloud's metadata api. Is is usually located on `169.254.169.254`.
+
+Else it may lead to Amazon IAM/GCP/etc account steal.
+
 ## Use RBAC
 
 Create new ServiceAccount for every component which requires querying API.
