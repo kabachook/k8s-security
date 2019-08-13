@@ -4,6 +4,8 @@
 
 K8s v1.15.0
 
+Installation made by `kubeadm`
+
 IPs:
 
 - Router `172.16.0.1`
@@ -17,8 +19,8 @@ Settings:
 
 External components:
 
-- Kubernetes dashboard 2.0.0-beta2
-- Helm & Tiller 2.14.2
+- Kubernetes dashboard 2.0.0-beta3
+- Helm & Tiller 2.14.3
 
 ---
 
