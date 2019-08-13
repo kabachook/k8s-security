@@ -1,5 +1,39 @@
 # Attacker's guide to kubernetes
 
+## General
+
+Typical workflow:
+
+Get cluster access (internal, RCE on container, etc)
+⬇️
+Check for serviceaccount and its privileges
+⬇️
+Scan for services and try to get other accounts
+🔄
+⬇️
+Get admin account or an account with sufficient privileges
+⬇️
+Execute code on cluster/steal data
+
+### ServiceAccount
+
+By default on every container a "default service account" is mounted to dir `/run/secrets/kubernetes.io/serviceaccount`
+
+By default it has no value, but admins may give it permissions, e.g Helm, Dashboard
+
+Check if account can get secrets, so you can compromise other accounts with different privileges
+
+---
+
+How to distinguish account token/keys?
+
+ServiceAccount can be in forms:
+
+- CA certificate + JWT token (usually on containers, `Webhook` authn)
+- CA certificate + client certificate + client key (usually in `.yaml` files as base64encoded strings, `TLS` authn)
+
+With any form you can query `apiserver` by http with, e.g `curl`. See [readme](./README.md) for second form usage examples, and k8s docs for `Webhook`.
+
 ## How to know we are in...
 
 ### Docker container
