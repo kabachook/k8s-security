@@ -675,6 +675,7 @@ Interesting fields to analyze:
 - `"sourceIPs": ["::1","127.0.0.1"]` - request source IP. Should be suspicious if query source is pod ip or external ip.
 - `"userAgent": "kubectl/v1.15.0 (linux/amd64) kubernetes/e8462b5"` - request User Agent. Should be suspicious if UA is `kubectl`, `curl`, browser, etc
 - `"objectRef.resource"` - kubernetes resource (`secrets`,`pods`,etc)
+- `"objectRef.subresource"` -kubernetes subresource (`exec`)
 - `"annotations.authorization*"` - RBAC decision annotation - allow/disallow and reason
 
 Use [audit2rbac](https://github.com/liggitt/audit2rbac) to generate RBAC manifest out of audit log file for your app
