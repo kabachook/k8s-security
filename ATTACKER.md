@@ -5,14 +5,22 @@
 Typical workflow:
 
 Get cluster access (internal, RCE on container, etc)
-⬇️
+
+⬇
+️
 Check for serviceaccount and its privileges
+
 ⬇️
+
 Scan for services and try to get other accounts
+
 🔄
 ⬇️
+
 Get admin account or an account with sufficient privileges
+
 ⬇️
+
 Execute code on cluster/steal data
 
 ### ServiceAccount
