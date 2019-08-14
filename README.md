@@ -34,6 +34,14 @@ The research was conducted during Summer of hack internship.
 
   Script for enumerating services in kubernetes cluster. Common services dictionary provided.
 
-## Presentations
+## Slides
 
 - [Midterm](https://docs.google.com/presentation/d/1_D1fyl_DO0SGn3lh2lsEGMplRc9TegX8pEhVF9hnX_0/edit?usp=sharing)
+
+## References
+
+- [Kubernetes security audit](https://github.com/kubernetes/community/tree/master/wg-security-audit/findings)
+
+  [Tracking issue](https://github.com/kubernetes/kubernetes/issues/81146)
+
+- [Attacking Kubernetes](https://github.com/kubernetes/community/blob/master/wg-security-audit/findings/AtredisPartners_Attacking_Kubernetes-v1.0.pdf)
