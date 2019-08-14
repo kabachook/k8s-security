@@ -18,7 +18,7 @@ Even though all components has TLS authentication, a sudden vulnerability can co
 
 ### Cloud provider metadata API
 
-You **SHOULD BLOCK** any requests to your cloud's metadata api. Is is usually located on `169.254.169.254`.
+You **SHOULD BLOCK** any requests to your cloud's metadata api. It is usually located on `169.254.169.254`.
 
 Else it may lead to Amazon IAM/GCP/etc account steal.
 
