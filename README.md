@@ -37,6 +37,7 @@ The research was conducted during Summer of hack internship.
 ## Slides
 
 - [Midterm](https://docs.google.com/presentation/d/1_D1fyl_DO0SGn3lh2lsEGMplRc9TegX8pEhVF9hnX_0/edit?usp=sharing)
+- [Final](https://docs.google.com/presentation/d/18A3dL0GvE6MJOvJtKdZBf-8Gd0E6fJov5BTrnxvKHtQ/edit?usp=sharing)
 
 ## References
 
