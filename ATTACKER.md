@@ -136,6 +136,7 @@ $ ./helm --host tiller-deploy.kube-system.svc.cluster.local:44134
 ```
 
 [Demo](./imgs/helm_pwn.svg)
+[Chart creation](./attacks/helm/README.md)
 
 ### Dashboard
 
