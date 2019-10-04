@@ -2,7 +2,7 @@
 
 ## ENV
 
-K8s v1.15.0
+K8s `v1.16.0`
 
 Installation made by `kubeadm`
 
@@ -14,13 +14,13 @@ IPs:
 
 Settings:
 
-- CRI - Docker 18.09.7
-- CNI - Flannel 0.11.0
+- CRI - Docker `18.09.12`
+- CNI - Flannel `0.11.0`
 
 External components:
 
-- Kubernetes dashboard 2.0.0-beta3
-- Helm & Tiller 2.14.3
+- Kubernetes dashboard `2.0.0-beta3`
+- Helm & Tiller `2.14.3`
 
 ---
 
@@ -358,6 +358,22 @@ _HTTPS request to `kubernetes-dashboard`_:
 
 => **No default network policy** for communication between namespaces!!!
 
+### Services
+
+You can get **ALL** services in cluster by querying SRV records for domain `*.*.svc.cluster.local`
+
+```bash
+root@nginx-deployment-65cf964c9-5dlkr:/$ dig SRV +short *.*.svc.cluster.local
+0 14 443 kubernetes.default.svc.cluster.local.
+0 14 53 kube-dns.kube-system.svc.cluster.local.
+0 14 9153 kube-dns.kube-system.svc.cluster.local.
+0 14 80 ingress-nginx.ingress-nginx.svc.cluster.local.
+0 14 443 ingress-nginx.ingress-nginx.svc.cluster.local.
+0 14 80 nginx-svc.default.svc.cluster.local.
+```
+
+That could easily expose all the services you believed are hidden. Enforce _network policy_ to block unwanted communications between pods.
+
 ---
 
 ## ETCD
@@ -425,7 +441,7 @@ Use namespaces. Never give an account a `cluster-admin` role.
 
 If you need admin privileges for your app(e.g. Tiller), create a new namespaced ServiceAccount.
 
-Also use principle of least when creating new ServiceAccounts
+Also use principle of least privilege when creating new ServiceAccounts
 
 ---
 
