@@ -2,6 +2,12 @@
 
 Enumerate kubernetes services
 
+## WARNING
+
+> There's a better way to discover all services with **one** DNS query. Use the tool only if you can't query SRV record on `*.*.svc.cluster.local`
+>
+> Check it out [here](../NOTES.md) Kube-dns -> services
+
 ## Usage
 
 ```
