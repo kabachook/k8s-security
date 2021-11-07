@@ -63,7 +63,7 @@ users:
 
 `client-certificate` and `client-key` should be set
 
-> P.S keys in yaml files could be replaced with normal command line `--` options
+> P.S. keys in yaml files could be replaced with normal command line `--` options
 
 ### etcd
 
