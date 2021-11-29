@@ -2,8 +2,6 @@
 
 This repo is a collection of kubernetes security stuff and research.
 
-The research was conducted during [Summ3r 0f h4ck](https://dsec.ru/about/traineeship/) traineeship.
-
 ## Overview
 
 - [Security notes](./NOTES.md)

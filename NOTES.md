@@ -131,7 +131,7 @@ disconnected (code: 1000)
 
 **Tip**
 
-Use `kubectl -v=7` to get curl equivalent of your qeury
+Use `kubectl -v=7` to get curl equivalent of your query
 
 ---
 
